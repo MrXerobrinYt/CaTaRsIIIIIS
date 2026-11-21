@@ -1,0 +1,80 @@
+# Render infrastructure-as-code for Figura Unchained Backend
+# Create the service at https://dashboard.render.com/ (Blueprint / "Infrastructure as Code")
+# or connect this repo and add these settings manually.
+
+services:
+  - type: web
+    name: figura-unchained-backend
+    env: python
+    region: frankfurt            # closest Render region to Russia (better latency)
+    plan: free                   # free tier: 512 MB RAM, shared CPU
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python server.py"
+    # Persistent disk is a PAID add-on on Render. On the free tier /data is
+    # ephemeral (users & avatars reset on every deploy). See DEPLOY.md.
+    # disk:
+    #   name: data
+    #   mountPath: /opt/render/project/src/data
+    #   sizeGB: 1
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: DEBUG
+        value: "false"
+      - key: AVATAR_DIR
+        value: "data/avatars"
+      - key: REQUIRE_AUTH
+        value: "true"
+      - key: TOKEN_LIFETIME_DAYS
+        value: "30"
+      - key: MAX_PING_BPS
+        value: "1000000"
+      - key: MAX_PING_SIZE
+        value: "8000"
+      - key: MAX_AVATAR_SIZE
+        value: "256000"
+      - key: MAX_AVATAR_UNPACKED_SIZE
+        value: "16777216"
+      - key: RATE_LIMIT_REQUESTS
+        value: "100"
+      - key: RATE_LIMIT_WINDOW
+        value: "60"
+      - key: RATE_LIMIT_CLEANUP_INTERVAL
+        value: "3600"
+      - key: WS_MAX_CONNECTIONS_PER_IP
+        value: "5"
+      - key: WS_MAX_MESSAGES_PER_SEC
+        value: "50"
+      - key: WS_MAX_SUBS_PER_CLIENT
+        value: "256"
+      - key: TRUSTED_PROXIES
+        value: "127.0.0.1, ::1, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
+      - key: CUSTOM_REAL_IP_HEADER
+        value: "X-Forwarded-For"
+      - key: LOGIN_RATE_LIMIT_REQUESTS
+        value: "10"
+      - key: LOGIN_RATE_LIMIT_WINDOW
+        value: "60"
+      - key: MIN_ADDON_VERSION
+        value: "1.9.3"
+      - key: ASSETS_UPDATE_INTERVAL_HOURS
+        value: "24"
+      - key: ASSETS_RATE_LIMIT_REQUESTS
+        value: "1000"
+      - key: ASSETS_RATE_LIMIT_WINDOW
+        value: "60"
+      - key: MAX_PRIDE_BADGE_ID
+        value: "63"
+      - key: REPORT_REASON_MAX
+        value: "200"
+      - key: REPORT_MAX_PER_DAY
+        value: "5"
+      - key: ASSETS_REPO
+        value: "FiguraMC/Assets"
+      - key: ASSETS_REF
+        value: "main"
+      # Optional: set these in the Render dashboard (Environment tab)
+      # - key: IDENTITY_KEY
+      # - key: GITHUB_TOKEN
